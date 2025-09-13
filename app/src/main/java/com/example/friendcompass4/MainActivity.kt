@@ -94,6 +94,7 @@ class MainActivity : ComponentActivity() {
 
         //
 
+
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
@@ -137,6 +138,8 @@ class MainActivity : ComponentActivity() {
 
         locationViewModel.startLocationUpdates()
         //
+
+
 
 
         setContent {
