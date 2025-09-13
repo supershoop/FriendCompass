@@ -100,7 +100,7 @@ fun AddFriend(nav: NavController) {
         Box(Modifier.padding(12.dp)) {
             Column {
                 Text("Add A Friend", fontSize = 36.sp, modifier=Modifier.padding(0.dp, 12.dp))
-                Text("Scan a HackTheNorth code", fontSize = 18.sp, modifier=Modifier.padding(0.dp, 6.dp))
+                Text("Scan a HackTheNorth QR code", fontSize = 18.sp, modifier=Modifier.padding(0.dp, 6.dp))
 
                 QRScannerScreen { result ->
                     if (!done) {

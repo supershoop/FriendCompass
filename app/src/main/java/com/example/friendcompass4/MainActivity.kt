@@ -1,5 +1,4 @@
 package com.example.friendcompass4
-import com.example.friendcompass4.R
 
 import android.Manifest
 import android.hardware.Sensor
@@ -15,13 +14,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,7 +28,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.twotone.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,16 +38,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.times
 import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
-import androidx.navigation.NavHost
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -62,10 +55,8 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
 import kotlin.math.absoluteValue
 import kotlin.math.cos
-import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -229,8 +220,8 @@ fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float): 
 fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
     val accent = MaterialTheme.colorScheme.primary
     var x = Location("dummyProvider")
-    x.longitude  = -80.toDouble()
-    x.latitude=47.toDouble()
+    x.longitude  = -80.5402155.toDouble()
+    x.latitude = 43.4726362.toDouble()
     val sample = listOf(Person("1","O","W", x))
     BoxWithConstraints (
         modifier = Modifier
@@ -254,13 +245,17 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
         sample.forEach { friend ->
             var angle = loc.bearingTo(friend.location) - azimuth - 90
             val rad = Math.toRadians(angle)
+            val magnitude = loc.distanceTo(friend.location)
             // raw x/y based on circle around center
-            val rawX = cos(rad).toFloat() * maxWidth.value / 2
-            val rawY = sin(rad).toFloat() * maxHeight.value / 2
+            val X = cos(rad).toFloat() * magnitude
+            val Y = sin(rad).toFloat() * magnitude
+
+            val rawX = (X/40f) * (maxHeight/2)
+            val rawY = (Y/40f) * (maxHeight/2)
 
             val (clampedX, clampedY) = clampToScreen(
-                rawX,
-                rawY,
+                rawX.value,
+                rawY.value,
                 maxWidth.value / 2,
                 maxHeight.value / 2,
                 16f
