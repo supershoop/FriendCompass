@@ -54,6 +54,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlin.math.absoluteValue
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -87,6 +88,7 @@ class MainActivity : ComponentActivity() {
     @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         ActivityCompat.requestPermissions(
             this,
@@ -122,6 +124,8 @@ class MainActivity : ComponentActivity() {
 
         locationViewModel.startLocationUpdates()
 
+
+
         setContent {
 
             FriendCompass4Theme(true) {
@@ -130,9 +134,12 @@ class MainActivity : ComponentActivity() {
                         .background(Color.Black)
                         .fillMaxSize()
                 ) {
+                    val azimuth by locationViewModel.azimuth.collectAsState()
+
+                    DrawBG("hi", "main", rotation = -azimuth.toFloat())
+
                     Column {
                         val friends by locationViewModel.friends.collectAsState()
-                        val azimuth by locationViewModel.azimuth.collectAsState()
                         val loc by locationViewModel.location.collectAsState()
 
                         Row {
