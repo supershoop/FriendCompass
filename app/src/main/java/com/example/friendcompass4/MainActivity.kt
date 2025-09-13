@@ -1,4 +1,5 @@
 package com.example.friendcompass4
+import com.example.friendcompass4.R
 
 import android.Manifest
 import android.hardware.GeomagneticField
@@ -44,6 +45,7 @@ import androidx.core.app.ActivityCompat
 import com.example.friendcompass4.ui.theme.FriendCompass4Theme
 import kotlin.math.cos
 import kotlin.math.sin
+
 
 
 class MainActivity : ComponentActivity() {
@@ -161,7 +163,6 @@ fun FriendMarker(name: String, angle: Double, size: Dp) {
 }
 
 
-
 @Composable
 fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
     val accent = MaterialTheme.colorScheme.primary
@@ -173,18 +174,16 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
     ) {
         val maxX = maxWidth / 2
         val maxY = maxHeight / 2
+
         // Compass circle
-        Box(
-            modifier = Modifier
-                .size(100.dp)
-                .background(accent, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "You",
-                fontSize = 30.sp
-            )
-        }
+        DrawFace("hi", "main")
+        Text(
+            text = "You",
+            fontSize = 30.sp
+        )
+
+
+
         friends.forEach { friend ->
             val angle = loc.bearingTo(friend.location) - azimuth
             val rad = Math.toRadians(angle)
