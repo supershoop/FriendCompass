@@ -18,27 +18,20 @@ import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.twotone.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -48,16 +41,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import com.example.friendcompass4.ui.theme.FriendCompass4Theme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -73,6 +61,7 @@ import kotlin.math.sin
 
 
 class MainActivity : ComponentActivity() {
+
     val locationViewModel: LocationViewModel by viewModels()
     private lateinit var sensorManager: SensorManager
     private lateinit var rotationVectorSensor: Sensor
@@ -102,9 +91,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //
+        /*
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_SMS, Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+            arrayOf(Manifest.permission.READ_SMS, Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION),
             1001
         )
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -135,55 +126,41 @@ class MainActivity : ComponentActivity() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, mainLooper)
 
         locationViewModel.startLocationUpdates()
+        //
+
+         */
 
 
 
         setContent {
 
             FriendCompass4Theme(true) {
-                val navController = rememberNavController() // create here
-                NavHost(
-                    navController = navController,
-                    startDestination = "home"
+                Box(
+                    Modifier
+                        .background(Color.Black)
+                        .fillMaxSize()
                 ) {
-                    composable("home") { mainScreen(navController, locationViewModel) }
-                    composable("addFriend") { AddFriend(navController) }
-                }
-            }
+                    val azimuth by locationViewModel.azimuth.collectAsState()
 
+                    DrawBG("hi", "main", rotation = -azimuth.toFloat())
+
+
+                    Column {
+                        val friends by locationViewModel.friends.collectAsState()
+                        val loc by locationViewModel.location.collectAsState()
+
+                        Row {
+                            Button(onClick={}) {
+                                Text("Add Friend")
+                            }
+                        }
+                        CompassScreen(friends, loc, azimuth.toDouble())
+                    }
+                }
+
+                }
 
         }
-    }
-}
-
-@Composable
-fun mainScreen(c: NavHostController, locationViewModel: LocationViewModel) {
-    Scaffold(
-        Modifier
-            .background(Color.Black)
-    ) { padding -> Box(
-        Modifier.padding(padding)
-    ) {
-        val azimuth by locationViewModel.azimuth.collectAsState()
-
-        DrawBG("hi", "main", rotation = -azimuth.toFloat())
-                    DrawCompass("hi", "main", rotation = -azimuth.toFloat())
-
-        Column {
-            val friends by locationViewModel.friends.collectAsState()
-            val loc by locationViewModel.location.collectAsState()
-
-            Box (Modifier.padding(0.dp, 32.dp).fillMaxWidth(), contentAlignment = Alignment.Center )
-            {
-                Button(onClick={c.navigate("addFriend")}, Modifier.padding(4.dp)) {
-                    Icon(Icons.Filled.Face, "Add")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Add Friend")
-                }
-            }
-            CompassScreen(friends, loc, azimuth.toDouble())
-        }
-    }
     }
 }
 
@@ -229,9 +206,13 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
 
         // Compass circle
         DrawFace("hi", "main")
+        DrawCompass("hi", "main", rotation = -azimuth.toFloat())
         Text(
-            text = "You",
-            fontSize = 30.sp
+            text = "YOU",
+            fontSize = 15.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Black,
+            modifier = Modifier.offset(x = 0.dp, y = 45.dp)
         )
         friends.forEach { friend ->
             var angle = loc.bearingTo(friend.location) - azimuth - 90

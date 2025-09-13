@@ -42,11 +42,11 @@ fun DrawFace(message: String, from: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun DrawCompass(message: String, from: String, modifier: Modifier = Modifier, rotation: Float) {
-    val compassImg = painterResource(R.drawable.friend)
+    val compassImg = painterResource(R.drawable.compass)
     Image(
         painter = compassImg,
         contentDescription = "compass image",
-        modifier = Modifier.size(50.dp).rotate(rotation),
+        modifier = Modifier.size(70.dp).rotate(rotation),
         contentScale = ContentScale.Crop
     )
 }
