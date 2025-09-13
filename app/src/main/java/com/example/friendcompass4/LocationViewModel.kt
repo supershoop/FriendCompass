@@ -64,7 +64,7 @@ class LocationViewModel(app: Application) : AndroidViewModel(app) {
                 }
 
 
-                delay(30000);
+                delay(30000000000);
             }
         }
     }
