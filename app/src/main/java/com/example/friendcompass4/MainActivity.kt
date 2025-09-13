@@ -22,16 +22,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.twotone.LocationOn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,6 +51,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.friendcompass4.ui.theme.FriendCompass4Theme
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -77,13 +87,13 @@ class MainActivity : ComponentActivity() {
                 SensorManager.getOrientation(rotationMatrix, orientation)
 
                 val azimuthRadians = orientation[0]          // rotation around Z-axis
-                locationViewModel.azimuth.value = Math.toDegrees(azimuthRadians.toDouble()).toFloat()
+                locationViewModel.azimuth.value =
+                    Math.toDegrees(azimuthRadians.toDouble()).toFloat()
             }
         }
+
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
     }
-
-
 
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -92,10 +102,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         //
-        /*
+
         ActivityCompat.requestPermissions(
             this,
-            arrayOf(Manifest.permission.READ_SMS, Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION),
+            arrayOf(
+                Manifest.permission.READ_SMS,
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ),
             1001
         )
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
@@ -109,7 +124,11 @@ class MainActivity : ComponentActivity() {
 
         Log.i("", locationViewModel.location.value.toString());
         rotationVectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR)!!
-        sensorManager.registerListener(listener, rotationVectorSensor, SensorManager.SENSOR_DELAY_UI)
+        sensorManager.registerListener(
+            listener,
+            rotationVectorSensor,
+            SensorManager.SENSOR_DELAY_UI
+        )
 
         val locationRequest = LocationRequest.Builder(
             1000L // interval in milliseconds
@@ -128,40 +147,54 @@ class MainActivity : ComponentActivity() {
         locationViewModel.startLocationUpdates()
         //
 
-         */
-
-
 
         setContent {
-
+            val navController = rememberNavController() // create here
             FriendCompass4Theme(true) {
-                Box(
-                    Modifier
-                        .background(Color.Black)
-                        .fillMaxSize()
+                NavHost(
+                    navController = navController,
+                    startDestination = "home"
                 ) {
-                    val azimuth by locationViewModel.azimuth.collectAsState()
-
-                    DrawBG("hi", "main", rotation = -azimuth.toFloat())
-
-
-                    Column {
-                        val friends by locationViewModel.friends.collectAsState()
-                        val loc by locationViewModel.location.collectAsState()
-
-                        Row {
-                            Button(onClick={}) {
-                                Text("Add Friend")
-                            }
-                        }
-                        CompassScreen(friends, loc, azimuth.toDouble())
-                    }
+                    composable("home") { HomeScreen(locationViewModel, navController) }
+                    composable("addFriend") { AddFriend(navController) }
                 }
 
-                }
-
+            }
         }
     }
+}
+
+@Composable
+fun HomeScreen(locationViewModel: LocationViewModel, n : NavController) {
+    Scaffold {
+        padding -> Box(
+        Modifier
+            .background(Color.Black)
+            .fillMaxSize()
+            .padding(padding)
+        ) {
+            val azimuth by locationViewModel.azimuth.collectAsState()
+
+            DrawBG("hi", "main", rotation = -azimuth.toFloat())
+
+
+            Column {
+                val friends by locationViewModel.friends.collectAsState()
+                val loc by locationViewModel.location.collectAsState()
+
+                Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                    Button(onClick={n.navigate("addFriend")}) {
+                        Icon(Icons.Default.Face, "")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Add a Friend")
+                    }
+                }
+                CompassScreen(friends, loc, azimuth.toDouble())
+            }
+        }
+    }
+
+
 }
 
 @Composable
@@ -195,6 +228,10 @@ fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float): 
 @Composable
 fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
     val accent = MaterialTheme.colorScheme.primary
+    var x = Location("dummyProvider")
+    x.longitude  = -80.toDouble()
+    x.latitude=47.toDouble()
+    val sample = listOf(Person("1","O","W", x))
     BoxWithConstraints (
         modifier = Modifier
             .fillMaxSize()
@@ -214,7 +251,7 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
             fontWeight = FontWeight.Black,
             modifier = Modifier.offset(x = 0.dp, y = 45.dp)
         )
-        friends.forEach { friend ->
+        sample.forEach { friend ->
             var angle = loc.bearingTo(friend.location) - azimuth - 90
             val rad = Math.toRadians(angle)
             // raw x/y based on circle around center
