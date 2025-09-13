@@ -10,14 +10,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.friendcompass4.R
 import android.util.Log
 import androidx.annotation.Size
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.ui.draw.rotate
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun DrawFace(message: String, from: String, modifier: Modifier = Modifier) {
