@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +61,7 @@ import kotlin.math.sin
 
 
 class MainActivity : ComponentActivity() {
+
     val locationViewModel: LocationViewModel by viewModels()
     private lateinit var sensorManager: SensorManager
     private lateinit var rotationVectorSensor: Sensor
@@ -89,7 +91,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
+        //
+        /*
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.READ_SMS, Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION),
@@ -123,6 +126,9 @@ class MainActivity : ComponentActivity() {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, mainLooper)
 
         locationViewModel.startLocationUpdates()
+        //
+
+         */
 
 
 
@@ -137,7 +143,7 @@ class MainActivity : ComponentActivity() {
                     val azimuth by locationViewModel.azimuth.collectAsState()
 
                     DrawBG("hi", "main", rotation = -azimuth.toFloat())
-                    DrawCompass("hi", "main", rotation = -azimuth.toFloat())
+
 
                     Column {
                         val friends by locationViewModel.friends.collectAsState()
@@ -200,9 +206,13 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
 
         // Compass circle
         DrawFace("hi", "main")
+        DrawCompass("hi", "main", rotation = -azimuth.toFloat())
         Text(
-            text = "You",
-            fontSize = 30.sp
+            text = "YOU",
+            fontSize = 15.sp,
+            color = Color.White,
+            fontWeight = FontWeight.Black,
+            modifier = Modifier.offset(x = 0.dp, y = 45.dp)
         )
         friends.forEach { friend ->
             var angle = loc.bearingTo(friend.location) - azimuth - 90
