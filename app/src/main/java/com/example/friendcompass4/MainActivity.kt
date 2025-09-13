@@ -137,6 +137,7 @@ class MainActivity : ComponentActivity() {
                     val azimuth by locationViewModel.azimuth.collectAsState()
 
                     DrawBG("hi", "main", rotation = -azimuth.toFloat())
+                    DrawCompass("hi", "main", rotation = -azimuth.toFloat())
 
                     Column {
                         val friends by locationViewModel.friends.collectAsState()
@@ -227,6 +228,7 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
             ) {
                 FriendMarker(friend.firstName.take(1)  + friend.lastName.take(1),
                     angle, 32.dp, friend.location.distanceTo(loc).toDouble())
+                //DrawFriend("hi", "main", x = , y = )
             }
         }
     }
