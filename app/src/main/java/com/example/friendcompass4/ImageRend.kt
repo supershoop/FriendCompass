@@ -1,5 +1,6 @@
 package com.example.friendcompass4
 
+import android.R.attr.rotation
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.friendcompass4.R
 import android.util.Log
 import androidx.annotation.Size
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,6 +33,14 @@ import kotlin.math.sin
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Canvas
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.graphics.drawscope.withTransform
+
 
 @Composable
 fun DrawFace(message: String, from: String, modifier: Modifier = Modifier) {
@@ -50,7 +60,7 @@ fun DrawCompass(message: String, from: String, modifier: Modifier = Modifier, ro
         painter = compassImg,
         contentDescription = "compass image",
         modifier = Modifier.size(70.dp).rotate(rotation),
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.FillHeight
     )
 }
 
@@ -91,19 +101,32 @@ fun DrawTrack() {
 
 @Composable
 fun DrawBG(message: String, from: String, modifier: Modifier = Modifier, rotation: Float) {
-    val bgImg = painterResource(R.drawable.bg)
-        Image(
-            painter = bgImg,
-            contentDescription = "bg image",
-            modifier = Modifier
-                .graphicsLayer {
-                    rotationZ = rotation
-                    // Pivot at center
-                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0.5f)
-                },
-            contentScale = androidx.compose.ui.layout.ContentScale.None // No scaling
-        )
-    
+    OversizedCanvasImage(rotation)
+}
+
+@Composable
+fun OversizedCanvasImage(rotat : Float) {
+    val img = ImageBitmap.imageResource(R.drawable.bg)
+
+    Canvas(modifier = Modifier.fillMaxSize()) {
+        val canvasCenter = Offset(size.width / 2, size.height / 2)
+
+        // Draw image larger than the screen
+        withTransform({
+            // Rotate around the canvas center
+            rotate(degrees = rotat, pivot = canvasCenter)
+        }) {
+            // Draw image oversized
+            drawImage(
+                image = img,
+                dstSize = IntSize(3000, 3000),   // oversized
+                dstOffset = IntOffset(
+                    (canvasCenter.x - 1500).toInt(),
+                    (canvasCenter.y - 1500).toInt()
+                )
+            )
+        }
+    }
 }
 
 /*
