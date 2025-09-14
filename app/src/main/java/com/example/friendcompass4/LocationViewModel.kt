@@ -28,6 +28,8 @@ class LocationViewModel(app: Application) : AndroidViewModel(app) {
     val firstName = MutableStateFlow("")
     val lastName = MutableStateFlow("")
 
+    var tracking = MutableStateFlow("0")
+
     @SuppressLint("DefaultLocale")
     fun startLocationUpdates() {
         viewModelScope.launch {

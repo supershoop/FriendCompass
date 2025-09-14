@@ -1,6 +1,7 @@
 package com.example.friendcompass4
 
 import android.Manifest
+import android.R.attr.onClick
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -14,7 +15,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -27,18 +30,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -57,6 +69,7 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import kotlin.math.absoluteValue
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 
@@ -93,7 +106,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         //
-
+/*
 
         ActivityCompat.requestPermissions(
             this,
@@ -139,6 +152,8 @@ class MainActivity : ComponentActivity() {
         locationViewModel.startLocationUpdates()
         //
 
+ */
+
 
 
 
@@ -168,12 +183,14 @@ fun HomeScreen(locationViewModel: LocationViewModel, n : NavController) {
             .padding(padding)
         ) {
             val azimuth by locationViewModel.azimuth.collectAsState()
+            val tracking by locationViewModel.tracking.collectAsState()
+            val friends by locationViewModel.friends.collectAsState()
+            val location by locationViewModel.location.collectAsState()
 
             DrawBG("hi", "main", rotation = -azimuth.toFloat())
 
 
             Column {
-                val friends by locationViewModel.friends.collectAsState()
                 val loc by locationViewModel.location.collectAsState()
 
                 Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
@@ -183,7 +200,56 @@ fun HomeScreen(locationViewModel: LocationViewModel, n : NavController) {
                         Text("Add a Friend")
                     }
                 }
-                CompassScreen(friends, loc, azimuth.toDouble())
+                CompassScreen(friends, loc, azimuth.toDouble(), locationViewModel)
+            }
+
+            if (tracking != "0"){
+                var targetPerson = Person("", "", "", Location("dummyProvider"))
+                Log.e("", friends.size.toString())
+                for (friend in friends){
+                    Log.e("", friend.phone)
+                    Log.e("", tracking)
+                    if (friend.phone == tracking){
+                        targetPerson = friend
+                    }
+                }
+
+                DrawTrack("hi", "hello")
+
+                Text(
+                    text = "TRACKING:",
+                    fontSize = 60.sp,
+                    fontWeight = FontWeight.Black,
+                    modifier = Modifier.offset(x = 10.dp, y = 670.dp),
+                    color = Color.Black,
+                )
+                Text(
+                    //name
+                    text = "jufhbwuif" + (targetPerson.firstName + " " + targetPerson.lastName.take(1)+".").uppercase(),
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.offset(x = 20.dp, y = 730.dp),
+                    color = Color.Black,
+                    letterSpacing = 0.2.sp
+                )
+
+                Text(
+                    //distance
+                    text = "-------------------------\nDISTANCE: " + (targetPerson.location.distanceTo(location)*10).roundToInt() / 10 + "m",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.offset(x = 20.dp, y = 770.dp),
+                    color = Color.Black,
+                    letterSpacing = 0.2.sp
+                )
+
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(20.dp)  // fills the screen
+                ) {
+                    FloatingActionButton(onClick = { locationViewModel.tracking.value = "0"}, modifier = Modifier.align ( Alignment.BottomEnd ).offset(x = 0.dp, y = -10.dp)) {
+                        Icon(Icons.Default.Close, "")
+                    }
+                }
             }
         }
     }
@@ -220,7 +286,10 @@ fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float): 
 }
 
 @Composable
-fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
+fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double, locationViewModel: LocationViewModel) {
+    val tracking by locationViewModel.tracking.collectAsState()
+
+
     val accent = MaterialTheme.colorScheme.primary
     var x = Location("dummyProvider")
     x.longitude  = -80.5402155.toDouble()
@@ -264,17 +333,45 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
                 16f
             )
 
+            //drawing friend
+            val friendImg = painterResource(R.drawable.friend)
+            val track = false
+            Image(
+                painter = friendImg,
+                contentDescription = "riend image",
+                modifier = Modifier.size((25 + 15 * Math.pow(2.toDouble(), (-friend.location.distanceTo(locationViewModel.location.value))/80.toDouble())).dp).offset(clampedX.dp, clampedY.dp).clip(CircleShape).clickable (
+                    //tracking this one
+                    onClick = { locationViewModel.tracking.value = friend.phone }
+                )
+            )
+            if (friend.phone == tracking) {
+                DrawHalo("","", x = clampedX, y = clampedY)
+            }
+
+            Text(
+                text = friend.firstName.take(1)  + friend.lastName.take(1),
+                fontSize = 13.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.offset(x = (0 + clampedX).dp, y = (30 + clampedY).dp)
+            )
+
+            /*
             Box(
                 modifier = Modifier
                     .offset(clampedX.dp, clampedY.dp)
-                    .size(64.dp)
-                    .background(MaterialTheme.colorScheme.secondary, CircleShape),
+                    .size(50.dp)
+                    .background(Color.Transparent, CircleShape),
                 contentAlignment = Alignment.Center
+
             ) {
                 FriendMarker(friend.firstName.take(1)  + friend.lastName.take(1),
                     angle, 32.dp, friend.location.distanceTo(loc).toDouble())
-                //DrawFriend("hi", "main", x = , y = )
             }
+
+             */
         }
     }
+
+
 }
