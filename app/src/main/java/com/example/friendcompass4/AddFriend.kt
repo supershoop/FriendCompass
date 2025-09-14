@@ -60,15 +60,6 @@ fun QRScannerScreen(onResult: (String) -> Unit) {
     val previewView = remember { PreviewView(context) }
 
 
-    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.CAMERA), 0)
-    }
-    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.SEND_SMS)!= PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.SEND_SMS), 0)
-    }
-    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.RECEIVE_SMS)!= PackageManager.PERMISSION_GRANTED) {
-        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.RECEIVE_SMS), 0)
-    }
 
     AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize()) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
@@ -168,6 +159,15 @@ fun AddFriend(nav: NavController) {
 var key=""
 @Composable
 fun Register(nav: NavController) {
+    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.CAMERA), 0)
+    }
+    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.SEND_SMS)!= PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.SEND_SMS), 1)
+    }
+    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.READ_SMS)!= PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.READ_SMS), 2)
+    }
     val sharedPref = LocalActivity.current!!.getPreferences(MODE_PRIVATE)
     if (sharedPref.contains("key")) {
         nav.navigate("Home")
