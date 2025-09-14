@@ -93,7 +93,7 @@ fun DrawBG(message: String, from: String, modifier: Modifier = Modifier, rotatio
     Image(
         painter = bgImg,
         contentDescription = "bg image",
-        modifier = Modifier.fillMaxHeight().rotate(rotation),
+        modifier = Modifier.fillMaxSize().rotate(rotation),
         contentScale = ContentScale.Crop
     )
     Log.d("ewf", "hi the draw face is activsted")
