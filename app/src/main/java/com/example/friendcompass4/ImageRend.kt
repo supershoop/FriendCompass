@@ -28,6 +28,7 @@ import kotlin.math.abs
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.sin
+import androidx.compose.foundation.clickable
 
 @Composable
 fun DrawFace(message: String, from: String, modifier: Modifier = Modifier) {
@@ -57,10 +58,33 @@ fun DrawFriend(message: String, from: String, modifier: Modifier = Modifier, x: 
     Image(
         painter = friendImg,
         contentDescription = "riend image",
-        modifier = Modifier.size(40.dp).offset(x.dp, y.dp)
+        modifier = Modifier.size(30.dp).offset(x.dp, y.dp).clickable {
+            //tracking this one
+
+        }
+    )
+}
+@Composable
+fun DrawHalo(message: String, from: String, modifier: Modifier = Modifier, x: Float, y: Float) {
+    val haloImg = painterResource(R.drawable.halo)
+    Image(
+        painter = haloImg,
+        contentDescription = "riend image",
+        modifier = Modifier.size(50.dp).offset(x.dp, y.dp)
     )
 }
 
+@Composable
+fun DrawTrack(message: String, from: String, modifier: Modifier = Modifier) {
+    val trackImg = painterResource(R.drawable.tracking)
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.FillBounds,
+        painter = trackImg,
+        contentDescription = "riend image",
+        //modifier = Modifier.fillMaxSize(),
+    )
+}
 
 
 @Composable
