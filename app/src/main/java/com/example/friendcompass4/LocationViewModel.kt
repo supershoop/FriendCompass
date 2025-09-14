@@ -1,15 +1,21 @@
 package com.example.friendcompass4
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.ContentResolver
+import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.telephony.PhoneNumberUtils
 import android.telephony.SmsManager
 import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.compose.material3.PermanentDrawerSheet
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -17,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.application
 import kotlinx.coroutines.flow.update
 
 class LocationViewModel(app: Application) : AndroidViewModel(app) {
