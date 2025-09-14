@@ -147,8 +147,10 @@ class MainActivity : ComponentActivity() {
             FriendCompass4Theme(true) {
                 NavHost(
                     navController = navController,
-                    startDestination = "home"
+                    startDestination = "register1"
                 ) {
+                    composable("register1") { Register(navController) }
+                    composable("register2") { Register2(navController) }
                     composable("home") { HomeScreen(locationViewModel, navController) }
                     composable("addFriend") { AddFriend(navController) }
                 }
@@ -223,8 +225,8 @@ fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float): 
 fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
     val accent = MaterialTheme.colorScheme.primary
     var x = Location("dummyProvider")
-    x.longitude  = -80.5402155.toDouble()
-    x.latitude = 43.4726362.toDouble()
+    x.longitude  = 0.toDouble()
+    x.latitude = -0.toDouble()
     val sample = listOf(Person("1","O","W", x))
     BoxWithConstraints (
         modifier = Modifier
@@ -252,6 +254,7 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
             // raw x/y based on circle around center
             val X = cos(rad).toFloat() * magnitude
             val Y = sin(rad).toFloat() * magnitude
+            Log.d("Distance", magnitude.toString())
 
             val rawX = (X/40f) * (maxHeight/2)
             val rawY = (Y/40f) * (maxHeight/2)
@@ -272,7 +275,7 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double) {
                 contentAlignment = Alignment.Center
             ) {
                 FriendMarker(friend.firstName.take(1)  + friend.lastName.take(1),
-                    angle, 32.dp, friend.location.distanceTo(loc).toDouble())
+                    angle, 32.dp, magnitude.toDouble())
                 //DrawFriend("hi", "main", x = , y = )
             }
         }

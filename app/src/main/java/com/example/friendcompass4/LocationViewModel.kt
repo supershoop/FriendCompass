@@ -20,7 +20,9 @@ import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.update
 
 class LocationViewModel(app: Application) : AndroidViewModel(app) {
-    private val endpoint = "+1 986 253 0688" // replace with your endpoint
+    object constants {
+        val endpoint = "+1 986 253 0688" // replace with your endpoint
+    }
     val sms = SmsManager.getDefault();
     val azimuth = MutableStateFlow(0f)
     val location = MutableStateFlow(Location("dummyprovider"))
@@ -33,7 +35,7 @@ class LocationViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             var lastUpdate = 0.toLong()
             while (true) {
-                sms.sendTextMessage(endpoint, "",
+                sms.sendTextMessage(constants.endpoint, "",
                     String.format("l;%s;%s;%f;%f", firstName.value, lastName.value, location.value.longitude, location.value.latitude), null, null);
 
 
@@ -53,7 +55,7 @@ class LocationViewModel(app: Application) : AndroidViewModel(app) {
 
                     while (it.moveToNext()) {
                         val sender = it.getString(addressIdx)
-                        if (PhoneNumberUtils.compare(sender, endpoint)) {
+                        if (PhoneNumberUtils.compare(sender, constants.endpoint)) {
                             val message = it.getString(bodyIdx)
                             val timestamp = cursor.getLong(dateIdx)
                             if (lastUpdate >= timestamp) break;
