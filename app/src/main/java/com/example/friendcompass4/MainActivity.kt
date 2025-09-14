@@ -314,7 +314,7 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double, locatio
             fontWeight = FontWeight.Black,
             modifier = Modifier.offset(x = 0.dp, y = 45.dp)
         )
-        sample.forEach { friend ->
+        friends.forEach { friend ->
             var angle = loc.bearingTo(friend.location) - azimuth - 90
             val rad = Math.toRadians(angle)
             val magnitude = loc.distanceTo(friend.location)

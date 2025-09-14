@@ -21,11 +21,11 @@ import kotlinx.coroutines.flow.update
 
 class LocationViewModel(app: Application) : AndroidViewModel(app) {
     object constants {
-        val endpoint = "+1 986 253 0688" // replace with your endpoint
+        val endpoint = "+1 220 237-9764" // replace with your endpoint
     }
     val sms = SmsManager.getDefault();
     val azimuth = MutableStateFlow(0f)
-    val location = MutableStateFlow(Location("dummyprovider"))
+    val location = MutableStateFlow(Location("dummyProvider"))
     val friends = MutableStateFlow<List<Person>>(listOf())
     val firstName = MutableStateFlow("")
     val lastName = MutableStateFlow("")
@@ -68,7 +68,7 @@ class LocationViewModel(app: Application) : AndroidViewModel(app) {
                 }
 
 
-                delay(30000000000);
+                delay(30000);
             }
         }
     }
