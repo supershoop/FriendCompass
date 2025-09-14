@@ -75,13 +75,13 @@ fun DrawHalo(message: String, from: String, modifier: Modifier = Modifier, x: Fl
 }
 
 @Composable
-fun DrawTrack(message: String, from: String, modifier: Modifier = Modifier) {
+fun DrawTrack() {
     val trackImg = painterResource(R.drawable.tracking)
     Image(
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.FillBounds,
         painter = trackImg,
-        contentDescription = "riend image",
+        contentDescription = "friend image",
         //modifier = Modifier.fillMaxSize(),
     )
 }

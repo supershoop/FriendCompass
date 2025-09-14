@@ -37,8 +37,8 @@ class LocationViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch {
             var lastUpdate = 0.toLong()
             while (true) {
-                sms.sendTextMessage(constants.endpoint, "",
-                    String.format("l;%s;%s;%f;%f", firstName.value, lastName.value, location.value.longitude, location.value.latitude), null, null);
+           //     sms.sendTextMessage(constants.endpoint, "",
+             //       String.format("l;%s;%s;%f;%f", firstName.value, lastName.value, location.value.longitude, location.value.latitude), null, null);
 
 
 

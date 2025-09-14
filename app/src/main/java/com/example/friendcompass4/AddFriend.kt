@@ -268,7 +268,7 @@ fun Register2(nav: NavController) {
                     if (state==3) Text("Something went wrong, please try again.", color = Color.Red)
                     if (state==2) {
                         val sharedPref = LocalActivity.current!!.getPreferences(MODE_PRIVATE)
-                        sharedPref.edit().putString("key", key);
+                        sharedPref.edit().putString("key", key).apply();
                         nav.navigate("home")
                     }
                 }

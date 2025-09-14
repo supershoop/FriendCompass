@@ -18,6 +18,7 @@ import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -69,6 +70,8 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import kotlin.math.absoluteValue
 import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.math.sin
 
@@ -213,40 +216,43 @@ fun HomeScreen(locationViewModel: LocationViewModel, n : NavController) {
                         targetPerson = friend
                     }
                 }
+                DrawTrack()
+                Column (
+                    Modifier.fillMaxSize().padding(12.dp),
+                    verticalArrangement = Arrangement.Bottom
+                    ) {
 
-                DrawTrack("hi", "hello")
 
-                Text(
-                    text = "TRACKING:",
-                    fontSize = 60.sp,
-                    fontWeight = FontWeight.Black,
-                    modifier = Modifier.offset(x = 10.dp, y = 670.dp),
-                    color = Color.Black,
-                )
-                Text(
-                    //name
-                    text = "jufhbwuif" + (targetPerson.firstName + " " + targetPerson.lastName.take(1)+".").uppercase(),
-                    fontSize = 40.sp,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier.offset(x = 20.dp, y = 730.dp),
-                    color = Color.Black,
-                    letterSpacing = 0.2.sp
-                )
+                    Text(
+                        text = "TRACKING:",
+                        fontSize = 48.sp,
+                        fontWeight = FontWeight.Black,
+                        color = Color.Black,
+                    )
+                    Text(
+                        //name
+                        text = (targetPerson.firstName + " " + targetPerson.lastName.take(1)+".").uppercase(),
+                        fontSize = 40.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black,
+                        letterSpacing = 0.2.sp
+                    )
 
-                Text(
-                    //distance
-                    text = "-------------------------\nDISTANCE: " + (targetPerson.location.distanceTo(location)*10).roundToInt() / 10 + "m",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Normal,
-                    modifier = Modifier.offset(x = 20.dp, y = 770.dp),
-                    color = Color.Black,
-                    letterSpacing = 0.2.sp
-                )
+                    Text(
+                        //distance
+                        text = "-------------------------\nDISTANCE: " + (targetPerson.location.distanceTo(location)*10).roundToInt() / 10 + "m",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.Black,
+                        letterSpacing = 0.2.sp
+                    )
+                }
+
 
                 Box(
-                    modifier = Modifier.fillMaxSize().padding(20.dp)  // fills the screen
+                    modifier = Modifier.fillMaxSize().padding(20.dp, 80.dp)  // fills the screen
                 ) {
-                    FloatingActionButton(onClick = { locationViewModel.tracking.value = "0"}, modifier = Modifier.align ( Alignment.BottomEnd ).offset(x = 0.dp, y = -10.dp)) {
+                    FloatingActionButton(onClick = { locationViewModel.tracking.value = "0"}, modifier = Modifier.align ( Alignment.BottomEnd )) {
                         Icon(Icons.Default.Close, "")
                     }
                 }
@@ -272,7 +278,7 @@ fun FriendMarker(name: String, angle: Double, size: Dp, distance: Double) {
 }
 
 
-fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float): Pair<Float, Float> {
+fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float, tracking: Boolean): Pair<Float, Float> {
     // shrink maxX/Y by radius so circle stays fully visible
     val clampedMaxX = maxX - radius
     val clampedMaxY = maxY - radius
@@ -282,6 +288,7 @@ fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float): 
     val scaleY = if (y.absoluteValue > clampedMaxY) clampedMaxY / y.absoluteValue else 1f
 
     val scale = minOf(scaleX, scaleY)
+    if (tracking) return x * scale to min(maxY-240, y*scale)
     return x * scale to y * scale
 }
 
@@ -331,7 +338,8 @@ fun CompassScreen(friends: List<Person>, loc: Location, azimuth: Double, locatio
                 rawY.value,
                 maxWidth.value / 2,
                 maxHeight.value / 2,
-                16f
+                16f,
+                tracking!="0"
             )
 
             //drawing friend
