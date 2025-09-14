@@ -306,7 +306,7 @@ fun clampToScreen(x: Float, y: Float, maxX: Float, maxY: Float, radius: Float, t
 
     val scale = minOf(scaleX, scaleY)
     if (tracking) return x * scale to min(maxY-240, y*scale)
-    return x * scale to y * scale
+    return x * scale to min(maxY-40, y * scale)
 }
 
 @Composable
