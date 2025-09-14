@@ -182,6 +182,7 @@ fun Register(nav: NavController) {
                     Column {
                         Text("Register", fontSize = 36.sp, modifier=Modifier.padding(0.dp, 12.dp))
                         Text("Scan your HackTheNorth QR Code", fontSize = 18.sp, modifier=Modifier.padding(0.dp, 6.dp))
+                        Text("Having issues? Try enabling all permissions in app settings! (Hold on app icon)", fontSize = 12.sp, modifier=Modifier.padding(0.dp, 8.dp))
                         var done = false
                         QRScannerScreen { result ->
                             if (!done) {
@@ -280,6 +281,7 @@ fun Register2(nav: NavController) {
                         sharedPref.edit().putString("key", key).apply();
                         nav.navigate("home")
                     }
+                    Text("Having issues? Try enabling all permissions in app settings! (Hold on app icon)", fontSize = 12.sp, modifier=Modifier.padding(0.dp, 6.dp))
                 }
             }
         }
