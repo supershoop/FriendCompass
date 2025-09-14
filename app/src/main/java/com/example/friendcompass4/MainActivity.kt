@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
 
         //
 
-/*
+
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
@@ -155,7 +155,7 @@ class MainActivity : ComponentActivity() {
 
         locationViewModel.startLocationUpdates()
         //
-*/
+
 
 
 
@@ -164,7 +164,7 @@ class MainActivity : ComponentActivity() {
             FriendCompass4Theme(true) {
                 NavHost(
                     navController = navController,
-                    startDestination = "home"
+                    startDestination = "register1"
                 ) {
                     composable("register1") { Register(navController) }
                     composable("register2") { Register2(navController) }
