@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -107,7 +108,7 @@ class MainActivity : ComponentActivity() {
 
         //
 
-
+/*
         ActivityCompat.requestPermissions(
             this,
             arrayOf(
@@ -151,7 +152,7 @@ class MainActivity : ComponentActivity() {
 
         locationViewModel.startLocationUpdates()
         //
-
+*/
 
 
 
@@ -160,7 +161,7 @@ class MainActivity : ComponentActivity() {
             FriendCompass4Theme(true) {
                 NavHost(
                     navController = navController,
-                    startDestination = "register1"
+                    startDestination = "home"
                 ) {
                     composable("register1") { Register(navController) }
                     composable("register2") { Register2(navController) }
@@ -194,13 +195,25 @@ fun HomeScreen(locationViewModel: LocationViewModel, n : NavController) {
                 val loc by locationViewModel.location.collectAsState()
 
                 Box(Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
-                    Button(onClick={n.navigate("addFriend")}) {
-                        Icon(Icons.Default.Face, "")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("Add a Friend")
+                    Column {
+                        Button(onClick={n.navigate("addFriend")}) {
+                            Icon(Icons.Default.Face, "")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Add a Friend")
+                        }
+
+                        val directions = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+                        val index = ((azimuth + 22.5) % 360 / 45).toInt()
+                        Text(
+                            "Direction: " + (azimuth*10).roundToInt()/10 + "° " + directions[index],
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
                 CompassScreen(friends, loc, azimuth.toDouble(), locationViewModel)
+
+
             }
 
             if (tracking != "0"){
