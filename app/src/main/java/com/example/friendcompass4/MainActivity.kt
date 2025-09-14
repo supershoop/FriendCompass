@@ -74,6 +74,7 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.max
@@ -138,7 +139,7 @@ class MainActivity : ComponentActivity() {
 
         val locationRequest = LocationRequest.Builder(
             1000L // interval in milliseconds
-        ).setMinUpdateDistanceMeters(0f).build()
+        ).setMinUpdateDistanceMeters(0f).setPriority(Priority.PRIORITY_HIGH_ACCURACY).build()
 
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {

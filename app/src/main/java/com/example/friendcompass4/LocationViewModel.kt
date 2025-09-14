@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.update
 
 class LocationViewModel(app: Application) : AndroidViewModel(app) {
     object constants {
-        val endpoint = "+1 220 237-9764" // replace with your endpoint
+        val endpoint = "+1 218 335 5420" // replace with your endpoint
     }
     val sms = SmsManager.getDefault();
     val azimuth = MutableStateFlow(0f)
