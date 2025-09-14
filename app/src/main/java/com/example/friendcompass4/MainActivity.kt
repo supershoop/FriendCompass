@@ -2,6 +2,7 @@ package com.example.friendcompass4
 
 import android.Manifest
 import android.R.attr.onClick
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -11,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -51,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +62,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.application
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -96,7 +101,7 @@ class MainActivity : ComponentActivity() {
 
                 val azimuthRadians = orientation[0]          // rotation around Z-axis
                 locationViewModel.azimuth.value =
-                    Math.toDegrees(azimuthRadians.toDouble()).toFloat()
+                    (Math.toDegrees(azimuthRadians.toDouble()).toFloat() + 360) % 360
             }
         }
 
@@ -105,23 +110,15 @@ class MainActivity : ComponentActivity() {
 
 
     @RequiresApi(Build.VERSION_CODES.S)
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //
 
-/*
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                Manifest.permission.READ_SMS,
-                Manifest.permission.SEND_SMS,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ),
-            1001
-        )
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
+        }
+
+        //
         sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
@@ -153,9 +150,8 @@ class MainActivity : ComponentActivity() {
 
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, mainLooper)
 
-        locationViewModel.startLocationUpdates()
         //
-*/
+
 
 
 
@@ -164,7 +160,7 @@ class MainActivity : ComponentActivity() {
             FriendCompass4Theme(true) {
                 NavHost(
                     navController = navController,
-                    startDestination = "home"
+                    startDestination = "register1"
                 ) {
                     composable("register1") { Register(navController) }
                     composable("register2") { Register2(navController) }
@@ -179,6 +175,14 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun HomeScreen(locationViewModel: LocationViewModel, n : NavController) {
+
+    if (ContextCompat.checkSelfPermission(LocalActivity.current, Manifest.permission.SEND_SMS)!= PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.SEND_SMS), 0)
+    }
+    if (ContextCompat.checkSelfPermission(LocalActivity.current, Manifest.permission.READ_SMS)!= PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.READ_SMS), 0)
+    }
+    locationViewModel.startLocationUpdates()
     Scaffold {
         padding -> Box(
         Modifier

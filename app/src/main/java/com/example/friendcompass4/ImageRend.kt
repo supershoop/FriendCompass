@@ -29,6 +29,8 @@ import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.sin
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.draw.clipToBounds
 
 @Composable
 fun DrawFace(message: String, from: String, modifier: Modifier = Modifier) {
@@ -90,13 +92,18 @@ fun DrawTrack() {
 @Composable
 fun DrawBG(message: String, from: String, modifier: Modifier = Modifier, rotation: Float) {
     val bgImg = painterResource(R.drawable.bg)
-    Image(
-        painter = bgImg,
-        contentDescription = "bg image",
-        modifier = Modifier.fillMaxSize().rotate(rotation),
-        contentScale = ContentScale.Crop
-    )
-    Log.d("ewf", "hi the draw face is activsted")
+        Image(
+            painter = bgImg,
+            contentDescription = "bg image",
+            modifier = Modifier
+                .graphicsLayer {
+                    rotationZ = rotation
+                    // Pivot at center
+                    transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0.5f, 0.5f)
+                },
+            contentScale = androidx.compose.ui.layout.ContentScale.None // No scaling
+        )
+    
 }
 
 /*

@@ -166,6 +166,15 @@ fun Register(nav: NavController) {
     if (sharedPref.contains("key")) {
         nav.navigate("Home")
     }
+
+    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.SEND_SMS)!= PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.SEND_SMS), 0)
+    }
+
+    if (ContextCompat.checkSelfPermission(LocalContext.current, Manifest.permission.READ_SMS)!= PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(LocalActivity.current, arrayOf(Manifest.permission.READ_SMS), 0)
+    }
+
     Scaffold {
         padding ->
             Box (Modifier.padding(padding)) {
